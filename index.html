@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Revelo: Before & After Slider for Shopify</title>
+  <meta name="description" content="Show product transformations with a drag-to-reveal before and after image slider. No code required. Works with any Shopify OS 2.0 theme.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0a0a0a;
+      --white: #ffffff;
+      --gray: #6b7280;
+      --light: #f9f9f9;
+      --border: #e5e7eb;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+    }
+
+    /* ── Nav ── */
+    nav {
+      padding: 20px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--white);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg { width: 22px; height: 18px; }
+
+    .logo-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-cta {
+      background: var(--white);
+      color: var(--black);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 100px 24px 80px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 32px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.5) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.6;
+      max-width: 520px;
+      margin: 0 auto 48px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--white);
+      color: var(--black);
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── Demo Visual ── */
+    .demo-wrapper {
+      max-width: 680px;
+      margin: 80px auto;
+      padding: 0 24px;
+    }
+
+    .demo-slider {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #1a1a1a;
+      border: 1px solid rgba(255,255,255,0.08);
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .demo-half {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .demo-before {
+      background: linear-gradient(135deg, #1c1c1c 0%, #2a2a2a 100%);
+      clip-path: inset(0 50% 0 0);
+    }
+
+    .demo-after {
+      background: linear-gradient(135deg, #f0f0f0 0%, #ffffff 100%);
+      clip-path: inset(0 0 0 50%);
+    }
+
+    .demo-label {
+      position: absolute;
+      bottom: 16px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 10px;
+      border-radius: 4px;
+    }
+
+    .demo-label.before {
+      left: 16px;
+      background: rgba(0,0,0,0.6);
+      color: #fff;
+    }
+
+    .demo-label.after {
+      right: 16px;
+      background: rgba(255,255,255,0.8);
+      color: #000;
+    }
+
+    .demo-handle-line {
+      position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 2px;
+      background: #fff;
+      transform: translateX(-50%);
+    }
+
+    .demo-handle-circle {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px; height: 44px;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    /* ── Features ── */
+    .features {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 24px 100px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 32px 40px;
+      text-align: center;
+      font-size: 13px;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="logo">
+      <div class="logo-icon">
+        <svg viewBox="0 0 28 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="10,2 3,10 10,18" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <line x1="14" y1="0" x2="14" y2="20" stroke="#000" stroke-width="2"/>
+          <polyline points="18,2 25,10 18,18" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+      </div>
+      <span class="logo-name">Revelo</span>
+    </a>
+    <a href="https://apps.shopify.com/revelo" class="nav-cta">Add to Shopify</a>
+  </nav>
+
+  <section class="hero">
+    <div class="badge">✦ Shopify Theme Extension</div>
+    <h1>Show the <span>transformation.</span><br>Let customers see it.</h1>
+    <p class="hero-sub">
+      A drag-to-reveal before &amp; after image slider for your Shopify store.
+      No code. Works with any OS 2.0 theme.
+    </p>
+    <div class="hero-actions">
+      <a href="https://apps.shopify.com/revelo" class="btn-primary">Add to Shopify — Free</a>
+    </div>
+  </section>
+
+  <div class="demo-wrapper">
+    <div class="demo-slider">
+      <div class="demo-half demo-before"></div>
+      <div class="demo-half demo-after"></div>
+      <div class="demo-handle-line"></div>
+      <div class="demo-handle-circle">
+        <svg width="20" height="16" viewBox="0 0 28 20" fill="none">
+          <polyline points="10,2 3,10 10,18" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <polyline points="18,2 25,10 18,18" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <span class="demo-label before">Before</span>
+      <span class="demo-label after">After</span>
+    </div>
+  </div>
+
+  <div class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🖱️</div>
+      <h3>Drag, touch, or keyboard</h3>
+      <p>Works with mouse, touch, and keyboard navigation. Accessible to all customers.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Zero performance impact</h3>
+      <p>No external scripts, no backend calls. Pure CSS and vanilla JS — loads instantly.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🎨</div>
+      <h3>Fully customizable</h3>
+      <p>Handle color, labels, corner radius, starting position — all adjustable in the theme editor.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📱</div>
+      <h3>Mobile-first</h3>
+      <p>Smooth touch dragging on every device. Optimized for iPhone and Android.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧩</div>
+      <h3>No code required</h3>
+      <p>Add the block from your theme editor. Upload two images. Done.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">↕️</div>
+      <h3>Horizontal &amp; vertical</h3>
+      <p>Switch between left/right or top/bottom slider direction from settings.</p>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Revelo · A Shopify theme extension by Ahmet Unveren
+  </footer>
+
+</body>
+</html>
